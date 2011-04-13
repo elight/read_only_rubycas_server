@@ -16,3 +16,4 @@ custom/*
 resources/dev
 .rvmrc
 .bundle
+*.gem
