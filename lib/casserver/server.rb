@@ -123,7 +123,10 @@ module CASServer
         raise e
       end
       
-      config.merge! HashWithIndifferentAccess.new(YAML.load(config_file))
+      config.merge! HashWithIndifferentAccess.new(YAML.load(config_file)[environment])
+      if File.exists? "config/database.yml"
+      	config.merge! YAML.load(File.read('config/database.yml')[environment])
+      end
       set :server, config[:server] || 'webrick'
     end
     
@@ -253,7 +256,7 @@ module CASServer
 
     def self.init_database!
       #CASServer::Model::Base.establish_connection(config[:database])
-      ActiveRecord::Base.establish_connection(config[:database])
+      ActiveRecord::Base.establish_connection(ENV["DATABASE_URL"] || config[:database])
       
       unless config[:disable_auto_migrations]
         print_cli_message "Running migrations to make sure your database schema is up to date..."
