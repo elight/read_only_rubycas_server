@@ -256,7 +256,7 @@ module CASServer
 
     def self.init_database!
       #CASServer::Model::Base.establish_connection(config[:database])
-      ActiveRecord::Base.establish_connection(ENV["DATABASE_URL"] || config[:database])
+      ActiveRecord::Base.establish_connection(config[:database])
       
       unless config[:disable_auto_migrations]
         print_cli_message "Running migrations to make sure your database schema is up to date..."
