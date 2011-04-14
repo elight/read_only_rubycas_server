@@ -123,9 +123,13 @@ module CASServer
         raise e
       end
       
+      
       config.merge! HashWithIndifferentAccess.new(YAML.load(config_file))[environment]
       if File.exists? "config/database.yml"
-      	config.merge! HashWithIndifferentAccess.new(:database => YAML.load(File.read('config/database.yml')))[environment]
+      	yaml_hash = HashWithIndifferentAccess.new YAML.load(File.read('config/database.yml'))
+      	config[:database] = yaml_hash[environment]
+      	require "ruby-debug"
+      	breakpoint
       end
       set :server, config[:server] || 'webrick'
     end
@@ -255,6 +259,7 @@ module CASServer
     end
 
     def self.init_database!
+    	breakpoint
       #CASServer::Model::Base.establish_connection(config[:database])
       $LOG.debug "About to connect to database. Database config - #{config[:database].inspect}"
       ActiveRecord::Base.establish_connection(config[:database])
