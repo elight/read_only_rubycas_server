@@ -123,9 +123,6 @@ module CASServer
         raise e
       end
       
-      require "ruby-debug"
-      breakpoint
-      
       config.merge! HashWithIndifferentAccess.new(YAML.load(config_file))[environment]
       if File.exists? "config/database.yml"
       	yaml_hash = HashWithIndifferentAccess.new YAML.load(File.read('config/database.yml'))
