@@ -125,7 +125,7 @@ module CASServer
       
       config.merge! HashWithIndifferentAccess.new(YAML.load(config_file))[environment]
       if File.exists? "config/database.yml"
-      	config.merge! HashWithIndifferentAccess.new(YAML.load(File.read('config/database.yml')))[environment]
+      	config.merge! HashWithIndifferentAccess.new(:database => YAML.load(File.read('config/database.yml')))[environment]
       end
       set :server, config[:server] || 'webrick'
     end
