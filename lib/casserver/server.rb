@@ -256,6 +256,7 @@ module CASServer
 
     def self.init_database!
       #CASServer::Model::Base.establish_connection(config[:database])
+      $LOG.debug "About to connect to database. Database config - #{config[:database].inspect}"
       ActiveRecord::Base.establish_connection(config[:database])
       
       unless config[:disable_auto_migrations]
