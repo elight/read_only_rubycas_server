@@ -22,7 +22,7 @@ $gemspec = Gem::Specification.new do |s|
   s.bindir = "bin"
   s.require_path = "lib"
 
-  s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README.md"]
+  s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README.textile"]
 
   s.has_rdoc = true
   s.post_install_message = %q{
