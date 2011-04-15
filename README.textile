@@ -27,7 +27,11 @@ ENV["APP_ROOT"] = File.dirname(__FILE__)
 
 This is so that the configurations work on a system that may not have root access (and lets config live in app directory, required for systems like heroku). 
 
-It also lets the gem point to the app direcotry root for db/migrations to run when the server is started. (At the moment, we still need to get the manual migrations working properly)
+-It also lets the gem point to the app direcotry root for db/migrations to run when the server is started. (At the moment, we still need to get the manual migrations working properly)-
+
+Actually, the datbase migrations loading isn't working yet with the above ENV configuration lines. I think the path needs to be exapnded for the gem to be able to work with it. For now, you can load a console (at least in heroku) and then run @ActiveRecord::Migrator.migrate( "./db/migrate")@. This worked for me. Sorry about this. Still a WIP...
+
+
 
 h3. Configuration files
 
