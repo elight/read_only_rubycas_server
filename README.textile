@@ -1,0 +1,101 @@
+h1. RORubyCAS-Server
+
+This is the Read Only Ruby CAS Server gem (not Rails on Ruby or anything silly like that -- in fact, this application is a Sinatra app).
+
+This gem picks up from the RubyCAS-Server gem in order to make that system more flexible, particularly with respect to setting up on *read-only filesystems* (particularly Heroku).
+
+Towards this end, this gem has made itself more modular. It is no longer required to be in the actual directory of the sinatra application, as it used to be with earlier versions. Instead, it can be included as a gem in the Gemfile (just like any other gem for a Rails app (for example)).
+
+For info the older non-read-only system (much of which is still pertinent) please see "http://code.google.com/p/rubycas-server":http://code.google.com/p/rubycas-server
+
+h2. Installation
+
+
+h3. Getting started
+
+* Because of the decoupling introduced by this gem, You will need to create the application structure yourself, since this gem has lost a lot of the files that used to make it work.
+** In the future it would be nice for this gem to havea generator which stamps out a default application structure which can be modified to fit one's needs.
+** Before the above happens, it's likely that I will upload an example app whcih you can customize
+** In the mean time, you can start with one of the default application structures from the original gem (see link above) and make the modifications that follow
+
+h3. Environment variables
+
+You must add the following configuration variables in your config.ru directory
+
+bc. ENV['CONFIG_FILE'] = "#{File.dirname(__FILE__)}/config/config.yml" #or wherever you want this to go to
+ENV["APP_ROOT"] = File.dirname(__FILE__)
+
+This is so that the configurations work on a system that may not have root access (and lets config live in app directory, required for systems like heroku). 
+
+It also lets the gem point to the app direcotry root for db/migrations to run when the server is started. (At the moment, we still need to get the manual migrations working properly)
+
+h3. Configuration files
+
+Wherever you decide to put your @config.yml@, you need to change the nesting a bit from how things work in the old version. Everything is now nested within environment keys. You can set something like this
+
+bc. all: &all
+  server: thin
+  port: 4000
+  ssl_cert: /path/to/your/ssl.pem
+  theme: simple
+  # Make sure to put this in with no file setting -- this should turn off file logging
+  log:
+    level: DEBUG
+  authenticator:
+    class: CASServer::Authenticators::SQL
+    database:
+      adapter: sqlite3
+      database: /home/cts/code/dem_cas_server/db/development.sqlite3
+    user_table: users
+    username_column: email
+    password_column: password
+production:
+  <<: *all
+development:
+  <<: *all
+  database:
+    adapter: sqlite3
+    database: /home/cts/code/dem_cas_server/db/development.sqlite3
+
+
+Inheriting from the @all@ settings (or whatever you want to call them (@default@?)) will make it easier to stay DRY. 
+
+Notice that right now we haven't yet figured out how to deal with specifying the database from SQL authentication. I think there will be a flag for inheriting from the default database. This is important because it's a little tricky to get the heroku database config info.
+
+On that note, Heroku gives you a config/database.yml file with all of the database configurations you need to run your app. So, this gem has been set up to check to se if that file exists, and if it does, it overwrites whatever was in the config.yml file. IF you want to specify database setting in that file for local development, you can use this nesting structure
+
+bc. development:
+  adapter: sqlite3
+  database: /home/cts/code/dem_cas_server/db/development.sqlite3
+test:
+  adapter: sqlite3
+  database: /home/cts/code/dem_cas_server/db/test.sqlite3
+
+h3. Removing stuff in the way
+
+If you copy things over from an old style server app direcotry, you will have to remove the lib directory so that all of the rubycas-server code will be loaded from the new gem and not from the outdated code.
+
+h3. Other stuff?...
+
+I very well may have missed stuff. If anything doesn't work the way it seems it should, let me know and I'll try to help you debug.
+
+
+
+
+h2. Boring...
+
+h3. Copyright
+
+Portions contributed by Christopher Small are copywrite (c) 2011 ThoughtNode Software.
+Portions contributed by Matt Zukowski are copyright (c) 2010 Urbacon Ltd.
+Other portions are copyright of their respective authors.
+
+h3. Authors
+
+See http://github.com/gunark/rubycas-server/commits/
+Also Christopher Small (ThoughtNode Software)
+
+h3. License
+
+RubyCAS-Server is licensed for use under the terms of the MIT License. 
+See the LICENSE file bundled with the official RubyCAS-Server distribution for details.
