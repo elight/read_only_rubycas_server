@@ -84,7 +84,16 @@ h3. Other stuff?...
 I very well may have missed stuff. If anything doesn't work the way it seems it should, let me know and I'll try to help you debug.
 
 
+h2. TODO (Development)
 
+I would love to see this version of the gem gain greater adoption and development from others, and perhaps even be folded back into the original project. There is certianly some work to do still in this direction.
+
+* Get specs working again 
+** These are going to have to be rewritten a bit due to the way that I've changed things around. In particular, I changed the default_config.yml file a bunch so that it would work for my options hash specs. Probably should copy that config file into some new config file and restore the old config files to how they were before, only using the new nesting structure. 
+** (Note however that there are specs for the options loading, which is the bulk of what I changed)
+** Going to be some legwork involved in getting the tests set to run in such a fashion that the gem is not required live in the same place as the application. Don't have time for this just yet, and would love help with it.
+
+Uhh.. I guess that's all I can think of for right now. But I'll keep this up to date.
 
 h2. Boring...
 
