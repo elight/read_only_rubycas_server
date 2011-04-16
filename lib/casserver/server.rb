@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'casserver/localization'
 require 'casserver/utils'
 require 'casserver/cas'
+require "casserver/options_hash"
 
 require 'logger'
 $LOG ||= Logger.new(STDOUT)
