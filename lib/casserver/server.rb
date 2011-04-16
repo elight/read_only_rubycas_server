@@ -16,13 +16,14 @@ module CASServer
     set :app_file, __FILE__
     set :public, Proc.new { settings.config[:public_dir] || File.join(root, "..", "..", "public") }
 
-    config = HashWithIndifferentAccess.new(
+    config = OptionsHash.new(
       :maximum_unused_login_ticket_lifetime => 5.minutes,
       :maximum_unused_service_ticket_lifetime => 5.minutes, # CAS Protocol Spec, sec. 3.2.1 (recommended expiry time)
       :maximum_session_lifetime => 2.days, # all tickets are deleted after this period of time
       :log => {:file => 'casserver.log', :level => 'DEBUG'},
       :uri_path => ""
     )
+    config.environment = environment
     set :config, config
 
     def self.uri_path
@@ -123,11 +124,13 @@ module CASServer
         raise e
       end
       
-      config.merge! HashWithIndifferentAccess.new(YAML.load(config_file))[environment]
+      # This is the meat of the options hash functionality
+      config.load_config config_file
       if File.exists? "config/database.yml"
-      	yaml_hash = HashWithIndifferentAccess.new YAML.load(File.read('config/database.yml'))
-      	config[:database] = yaml_hash[environment]
+      	config.load_database_config "config/database.yml"
       end
+      config.inherit_authenticator_database!
+      
       set :server, config[:server] || 'webrick'
     end
     

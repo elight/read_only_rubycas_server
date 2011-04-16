@@ -9,6 +9,8 @@ require 'ostruct'
 
 require 'capybara'
 require 'capybara/dsl'
+require "active_record"
+require "active_record/base"
 
 # set test environment
 set :environment, :test

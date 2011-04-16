@@ -1,50 +1,73 @@
-server: webrick
-port: 6543
-#ssl_cert: test.pem
-#uri_path: /cas
-#bind_address: 0.0.0.0
+all: &all
+  server: webrick
+  port: 6543
+  #ssl_cert: test.pem
+  #uri_path: /cas
+  #bind_address: 0.0.0.0
 
-# database:
-#   adapter: mysql
-#   database: casserver
-#   username: root
-#   password: 
-#   host: localhost
-#   reconnect: true
-database:
- adapter: sqlite3
- database: spec/casserver_spec.db
- 
-disable_auto_migrations: true
+  # database:
+  #   adapter: mysql
+  #   database: casserver
+  #   username: root
+  #   password: 
+  #   host: localhost
+  #   reconnect: true
+  database:
+   adapter: sqlite3
+   database: spec/casserver_spec.db
+   
+  disable_auto_migrations: true
 
-quiet: true
+  quiet: true
 
-authenticator:
-  class: CASServer::Authenticators::Test
-  password: spec_password
+  authenticator:
+    class: CASServer::Authenticators::Test
+    password: spec_password
+    database:
+      adapter: mysql
 
-theme: simple
+  theme: simple
 
-organization: "RSPEC-TEST"
+  organization: "RSPEC-TEST"
 
-infoline: "This is an rspec test."
+  infoline: "This is an rspec test."
 
-#custom_views: /path/to/custom/views
+  #custom_views: /path/to/custom/views
 
-default_locale: en
+  default_locale: en
 
-log:
-  file: casserver_spec.log
-  level: DEBUG
+  log:
+    file: casserver_spec.log
+    level: DEBUG
 
-#db_log:
-#  file: casserver_spec_db.log
+  #db_log:
+  #  file: casserver_spec_db.log
 
-enable_single_sign_out: true
+  enable_single_sign_out: true
 
-#maximum_unused_login_ticket_lifetime: 300
-#maximum_unused_service_ticket_lifetime: 300
+  #maximum_unused_login_ticket_lifetime: 300
+  #maximum_unused_service_ticket_lifetime: 300
 
-#maximum_session_lifetime: 172800
+  #maximum_session_lifetime: 172800
 
-#downcase_username: true
+  #downcase_username: true
+  
+  
+production: 
+  <<: *all
+  server: thin
+  authenticator:
+    class: CASServer::Authenticators::SQL
+    database: inherit
+    user_table: users
+    username_column: email
+    password_column: password
+    
+  
+test:
+  <<: *all
+  server: mongrel
+  
+development:
+  <<: *all
+  server: apache

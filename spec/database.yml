@@ -1,0 +1,5 @@
+development:
+  adapter: sqlite3
+  
+production:
+  adapter: postgresql
