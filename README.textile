@@ -47,9 +47,7 @@ bc. all: &all
     level: DEBUG
   authenticator:
     class: CASServer::Authenticators::SQL
-    database:
-      adapter: sqlite3
-      database: /home/cts/code/dem_cas_server/db/development.sqlite3
+    database: inherit
     user_table: users
     username_column: email
     password_column: password
@@ -64,7 +62,7 @@ development:
 
 Inheriting from the @all@ settings (or whatever you want to call them (@default@?)) will make it easier to stay DRY. 
 
-Notice that right now we haven't yet figured out how to deal with specifying the database from SQL authentication. I think there will be a flag for inheriting from the default database. This is important because it's a little tricky to get the heroku database config info.
+Notice that the value of @options[:authenticator][:database]@ has been set to inherit here. This lets the application know that the database which is storing CAS specific stuff is alsa the database where the user data is going to be stored. This is helpful with heroku since it lets you just set the user database to the same database as that which comes with the heroku account without having to muck around a bunch. If you need to specify this manually, just use the same syntax as for specifying the database in general.
 
 On that note, Heroku gives you a config/database.yml file with all of the database configurations you need to run your app. So, this gem has been set up to check to se if that file exists, and if it does, it overwrites whatever was in the config.yml file. IF you want to specify database setting in that file for local development, you can use this nesting structure
 
