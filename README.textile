@@ -18,6 +18,26 @@ h3. Getting started
 ** Before the above happens, it's likely that I will upload an example app whcih you can customize
 ** In the mean time, you can start with one of the default application structures from the original gem (see link above) and make the modifications that follow
 
+h3. Development environment
+
+You have to require the development requirements of the rubycas gem while you are developing the application which uses it. I'm hoping someone can share with me a slick bundler shortcut for doing this sort of thing (requiring not just a gem's dependencies, but also a gem's development dependencies (and only while in development mode on the application)), but in the mean time, you can include the following in your Gemfile.
+
+bc. gem "rubycas-server", :git => "https://github.com/metasoarous/read_only_rubycas_server.git", :ref => "6d7b8d2"
+# gem "rubycas-server", :path => "/path/to/rubycas-server" # If you want to work off of a local version
+gem "thin", "1.2.10"
+group :development, :test do
+	# These are all development dependencies for the rubycas-server gem 
+	gem "rack-test"
+  gem "capybara"
+  gem "rspec"
+  gem "rspec-core"
+  gem "sqlite3", "~> 1.3.1"
+  # for authenticator specs
+  gem "net-ldap", "~> 0.1.1"
+end
+
+Hopefully I will either soon have rubycas-server set up as a gem on gemcutter or this project will get folded into the main project. In the mean time, you can point to the github repo as shown above.
+
 h3. Environment variables
 
 You must add the following configuration variables in your config.ru directory
@@ -30,8 +50,6 @@ This is so that the configurations work on a system that may not have root acces
 -It also lets the gem point to the app direcotry root for db/migrations to run when the server is started. (At the moment, we still need to get the manual migrations working properly)-
 
 Actually, the datbase migrations loading isn't working yet with the above ENV configuration lines. I think the path needs to be exapnded for the gem to be able to work with it. For now, you can load a console (at least in heroku) and then run @ActiveRecord::Migrator.migrate( "./db/migrate")@. This worked for me. Sorry about this. Still a WIP...
-
-
 
 h3. Configuration files
 
