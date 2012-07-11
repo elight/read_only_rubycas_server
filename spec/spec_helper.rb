@@ -7,8 +7,8 @@ require 'rspec'
 require 'logger'
 require 'ostruct'
 
-require 'capybara'
-require 'capybara/dsl'
+#require 'capybara'
+#require 'capybara/dsl'
 require "active_record"
 require "active_record/base"
 
@@ -35,39 +35,18 @@ end
 # external services.
 #
 # This will likely break in the future when Capybara or RackTest are upgraded.
-class Capybara::Driver::RackTest
-  alias_method :original_follow_redirects!, :follow_redirects!
-  alias_method :original_current_url, :current_url
-
-  def current_url
-    if @redirected_to_external_url
-      @redirected_to_external_url
-    else
-      original_current_url
-    end
-  end
-
-  def follow_redirects!
-    if response['Location'] =~ /^http:/
-      @redirected_to_external_url = response['Location']
-    else
-      original_follow_redirects!
-    end
-  end
-end
-
 # This called in specs' `before` block.
 # Due to the way Sinatra applications are loaded,
 # we're forced to delay loading of the server code
-# until the start of each test so that certain 
+# until the start of each test so that certain
 # configuraiton options can be changed (e.g. `uri_path`)
 def load_server(config_file)
   ENV['CONFIG_FILE'] = config_file
-  
+
   silence_warnings do
     load File.dirname(__FILE__) + '/../lib/casserver/server.rb'
   end
-  
+
   CASServer::Server.enable(:raise_errors)
   CASServer::Server.disable(:show_exceptions)
 
@@ -82,7 +61,7 @@ def reset_spec_database
     CASServer::Server.config[:database] && CASServer::Server.config[:database][:database]
 
   FileUtils.rm_f(CASServer::Server.config[:database][:database])
-  
+
   ActiveRecord::Base.logger = Logger.new(STDOUT)
   ActiveRecord::Base.logger.level = Logger::ERROR
   ActiveRecord::Migration.verbose = false
