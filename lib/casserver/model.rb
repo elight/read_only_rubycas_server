@@ -32,9 +32,12 @@ module CASServer::Model
   end
 
   class Base < ActiveRecord::Base
+    self.abstract_class = true
   end
 
   class Ticket < Base
+    self.abstract_class = true
+
     def to_s
       ticket
     end
